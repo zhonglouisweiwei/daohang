@@ -4,163 +4,158 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的导航站</title>
-    <meta name="description" content="个人主页导航站 — 时钟、天气、日历、搜索、自定义书签">
+    <title>我的工作台 - Premium Edition</title>
+    <meta name="description" content="A premium Bento-grid dashboard with glassmorphism aesthetics">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-    <!-- 动态背景粒子 -->
-    <div class="bg-particles" id="bgParticles"></div>
+    <main class="bento-container">
 
-    <!-- 主容器 -->
-    <main class="container">
-
-        <!-- ========== 顶部一排：时钟 + 天气 + 日历 ========== -->
-        <section class="top-bar">
-
-            <!-- 时钟 -->
-            <div class="glass-card clock-card">
-                <p class="greeting" id="greeting">你好</p>
-                <h1 class="clock" id="clock">00:00:00</h1>
-                <p class="date-text" id="dateText">2026年1月1日 星期四</p>
+        <!-- 1. Time & Weather (Span 2) -->
+        <div class="bento-card span-2 time-weather-card">
+            <div class="time-section">
+                <span class="greeting" id="greeting">你好</span>
+                <span class="clock" id="clock">00:00:00</span>
+                <span class="date" id="dateText">1970/01/01</span>
             </div>
-
-            <!-- 天气卡片 -->
-            <div class="glass-card weather-card" id="weatherCard">
-                <div class="weather-header">
-                    <span class="weather-icon" id="weatherIcon">🌤️</span>
-                    <div>
-                        <p class="weather-temp" id="weatherTemp">--°C</p>
-                        <p class="weather-desc" id="weatherDesc">加载中...</p>
-                    </div>
+            <div class="weather-section">
+                <div class="weather-info">
+                    <span class="weather-temp" id="weatherTemp">--°C</span>
+                    <span class="weather-desc" id="weatherDesc">加载中...</span>
+                    <span class="weather-extra">
+                        <span id="weatherCity">📍--</span>
+                        <span id="weatherHumidity">💧--%</span>
+                    </span>
                 </div>
-                <div class="weather-details">
-                    <span id="weatherHumidity">💧 --%</span>
-                    <span id="weatherWind">🌬️ -- km/h</span>
-                    <span id="weatherCity" class="weather-city-tag">📍 --</span>
-                </div>
-                <button class="weather-settings-btn" id="weatherSettingsBtn" title="设置城市">⚙️</button>
+                <div class="weather-icon" id="weatherIcon" title="点击设置城市">☁️</div>
             </div>
+        </div>
 
-            <!-- 迷你日历 -->
-            <div class="glass-card calendar-card">
-                <div class="cal-header">
-                    <button class="cal-nav" id="calPrev">‹</button>
-                    <span class="cal-title" id="calTitle">2026年2月</span>
-                    <button class="cal-nav" id="calNext">›</button>
-                </div>
-                <table class="cal-table">
-                    <thead>
-                        <tr>
-                            <th>日</th>
-                            <th>一</th>
-                            <th>二</th>
-                            <th>三</th>
-                            <th>四</th>
-                            <th>五</th>
-                            <th>六</th>
-                        </tr>
-                    </thead>
-                    <tbody id="calBody"></tbody>
-                </table>
-            </div>
-        </section>
-
-        <!-- ========== 搜索栏 ========== -->
-        <section class="search-section">
-            <div class="glass-card search-bar">
-                <select class="search-engine" id="searchEngine" title="选择搜索引擎">
+        <!-- 2. Search Box (Span 2) -->
+        <div class="bento-card span-2 search-card">
+            <div class="search-wrapper">
+                <select id="searchEngine" class="search-engine-select">
                     <option value="google">Google</option>
                     <option value="bing">Bing</option>
                     <option value="duckduckgo">DuckDuckGo</option>
                 </select>
-                <input type="text" class="search-input" id="searchInput" placeholder="搜索任何内容..." autocomplete="off">
-                <button class="search-btn" id="searchBtn" title="搜索">
+                <input type="text" id="searchInput" class="search-input" placeholder="输入搜索内容..." autocomplete="off">
+                <button id="searchBtn" class="search-btn" title="搜索">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
                         stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="11" cy="11" r="8" />
-                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                     </svg>
                 </button>
             </div>
-        </section>
+        </div>
 
-        <!-- ========== 导航卡片 ========== -->
-        <section class="bookmarks-section">
-            <div class="section-header">
-                <h2>我的导航</h2>
-                <div class="header-actions">
-                    <button class="manage-btn" id="manageBtn" title="管理卡片">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="1" />
-                            <circle cx="12" cy="5" r="1" />
-                            <circle cx="12" cy="19" r="1" />
-                        </svg>
-                        <span>管理</span>
-                    </button>
-                    <button class="add-btn" id="addCardBtn" title="添加卡片" style="display:none">
+
+        <!-- 3. Bookmarks/Navigation -->
+        <div class="bento-card span-4 bookmarks-card">
+            <div class="card-header" id="bookmarksHeader">
+                <div class="card-title">
+                    🌐 我的导航
+                    <button class="settings-btn" id="openSettingsBtn" title="主题与布局设置">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2.5" stroke-linecap="round">
-                            <line x1="12" y1="5" x2="12" y2="19" />
-                            <line x1="5" y1="12" x2="19" y2="12" />
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path
+                                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+                            </path>
                         </svg>
-                        <span>添加</span>
                     </button>
                 </div>
+                <div style="display:flex; gap: 8px; align-items: center;">
+                    <input type="file" id="importFile" accept=".html" style="display:none">
+                    <button class="btn-text" id="importBtn" title="导入从Edge/Chrome导出的书签HTML文件">导入书签</button>
+                    <button class="btn-text" id="addCardBtn" style="display:none">添加节点</button>
+                    <button class="btn-text" id="manageBtn">模式切换</button>
+                </div>
             </div>
-            <div class="card-grid" id="cardGrid">
-                <!-- 卡片由 JS 动态渲染 -->
+            <div class="bookmarks-grid" id="cardGrid">
+                <!-- dynamic -->
             </div>
-        </section>
+        </div>
+
     </main>
 
-    <!-- ========== 添加/编辑卡片弹窗 ========== -->
+    <!-- Modals -->
+
+    <!-- URL Bookmark Modal -->
     <div class="modal-overlay" id="modalOverlay">
-        <div class="modal glass-card">
-            <h3 class="modal-title" id="modalTitle">添加导航卡片</h3>
-            <div class="modal-body">
-                <label>
-                    <span>名称</span>
-                    <input type="text" id="cardName" placeholder="例如：Bilibili" autocomplete="off">
-                </label>
-                <label>
-                    <span>网址</span>
-                    <input type="url" id="cardUrl" placeholder="https://www.bilibili.com" autocomplete="off">
-                </label>
-                <div class="favicon-preview">
-                    <img id="faviconPreview" src="" alt="" style="display:none">
-                    <span id="faviconHint">输入网址后自动获取图标</span>
-                </div>
+        <div class="modal">
+            <div class="modal-title" id="modalTitle">添加导航</div>
+            <div class="form-group">
+                <label>名称</label>
+                <input type="text" id="cardName" class="form-input" placeholder="网站名称" autocomplete="off">
+            </div>
+            <div class="form-group">
+                <label>网址</label>
+                <input type="url" id="cardUrl" class="form-input" placeholder="https://..." autocomplete="off">
+            </div>
+            <div class="form-group">
+                <label>分组名称 (可选)</label>
+                <input type="text" id="cardGroup" class="form-input" placeholder="默认导航" autocomplete="off">
             </div>
             <div class="modal-actions">
                 <button class="btn btn-cancel" id="modalCancel">取消</button>
-                <button class="btn btn-confirm" id="modalConfirm">确认</button>
+                <button class="btn btn-primary" id="modalConfirm">确认</button>
             </div>
         </div>
     </div>
 
-    <!-- ========== 城市设置弹窗 ========== -->
+    <!-- Weather/City Modal -->
     <div class="modal-overlay" id="cityModalOverlay">
-        <div class="modal glass-card modal-sm">
-            <h3 class="modal-title">设置城市</h3>
-            <div class="modal-body">
-                <label>
-                    <span>城市名（拼音或英文）</span>
-                    <input type="text" id="cityInput" placeholder="例如：Beijing" autocomplete="off">
-                </label>
+        <div class="modal" style="max-width: 350px;">
+            <div class="modal-title">位置设置</div>
+            <div class="form-group">
+                <label>城市拼音或英文名</label>
+                <input type="text" id="cityInput" class="form-input" placeholder="例如：Beijing" autocomplete="off">
             </div>
             <div class="modal-actions">
                 <button class="btn btn-cancel" id="cityCancel">取消</button>
-                <button class="btn btn-confirm" id="cityConfirm">确认</button>
+                <button class="btn btn-primary" id="cityConfirm">保存</button>
             </div>
         </div>
     </div>
+
+    <!-- Global Settings Modal -->
+    <div class="modal-overlay" id="settingsModalOverlay">
+        <div class="modal">
+            <div class="modal-title">外观与布局设置</div>
+            <div class="form-group">
+                <label>导航卡片大小比例</label>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 0.8rem; color: var(--text-secondary);">小</span>
+                    <input type="range" id="cardSizeSlider" min="0.5" max="2" step="0.1" value="1" style="flex:1;">
+                    <span style="font-size: 0.8rem; color: var(--text-secondary);">大</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>主体颜色主题 (竞速红/极客青...)</label>
+                <div style="display: flex; gap: 10px; margin-top: 8px;">
+                    <input type="color" id="themeColor1" value="#ff2a5f" title="主高光色 (Accent & Mesh 1)"
+                        style="flex:1; height:40px; border:none; border-radius:8px; cursor:pointer;" />
+                    <input type="color" id="themeColor2" value="#00d2ff" title="副高光色 (Mesh 3)"
+                        style="flex:1; height:40px; border:none; border-radius:8px; cursor:pointer;" />
+                </div>
+                <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 8px;">
+                    更改颜色后立即生效。左侧为主色调（按钮、边框等）。
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-primary" id="settingsConfirm">完成</button>
+            </div>
+        </div>
+    </div>
+
+
 
     <script src="app.js"></script>
 </body>
