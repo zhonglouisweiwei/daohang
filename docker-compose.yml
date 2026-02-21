@@ -1,0 +1,8 @@
+version: '3.8'
+services:
+  navigation-site:
+    build: .
+    container_name: premium-navigation
+    ports:
+      - "8080:80"
+    restart: unless-stopped
