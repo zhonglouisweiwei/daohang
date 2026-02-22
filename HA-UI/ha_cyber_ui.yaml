@@ -1,0 +1,1060 @@
+title: 赛博中控 - CyberHome
+button_card_templates:
+  cyber_glow_box:
+    styles:
+      card:
+        - background: "rgba(10, 15, 25, 0.4)"
+        - backdrop-filter: "blur(10px)"
+        - border-radius: "16px"
+        - padding: "16px"
+        - margin-bottom: "16px"
+        - border: "1px solid rgba(0, 210, 255, 0.2)"
+        - box-shadow: "0 0 20px rgba(0, 210, 255, 0.1)"
+  room_nav_btn:
+    show_name: true
+    show_icon: false
+    styles:
+      card:
+        - height: "55px"
+        - background: "rgba(255, 255, 255, 0.03)"
+        - backdrop-filter: "blur(8px)"
+        - border: "1px solid rgba(255, 255, 255, 0.05)"
+        - border-radius: "12px"
+        - transition: "all 0.3s ease"
+        - color: "#ccc"
+        - margin-bottom: "12px"
+        - box-shadow: "0 4px 6px rgba(0,0,0,0.1)"
+      name:
+        - font-size: "16px"
+        - font-weight: "bold"
+        - letter-spacing: "2px"
+    state:
+      - operator: template
+        value: >
+          [[[ return states['input_select.room_select'].state === variables.room_name; ]]]
+        styles:
+          card:
+            - background: "rgba(0, 210, 255, 0.1)"
+            - border: "1px solid #00d2ff"
+            - transform: "translateX(-10px) scale(1.02)"
+            - box-shadow: "0 0 20px rgba(0, 210, 255, 0.5), inset 0 0 10px rgba(0, 210, 255, 0.2)"
+          name:
+            - color: "#ffffff"
+            - text-shadow: "0 0 8px #00d2ff"
+    tap_action:
+      action: call-service
+      service: input_select.select_option
+      service_data:
+        entity_id: input_select.room_select
+        option: "[[[ return variables.room_name; ]]]"
+  cyber_switch:
+    show_state: false
+    show_name: true
+    show_icon: true
+    styles:
+      card:
+        - height: "80px"
+        - background: "rgba(20, 20, 25, 0.6)"
+        - border-radius: "12px"
+        - border: "1px solid rgba(255,255,255,0.05)"
+        - padding: "10px"
+        - transition: "all 0.3s ease"
+        - margin-bottom: "8px"
+      grid:
+        - grid-template-areas: '"i n"'
+        - grid-template-columns: "40% 60%"
+      icon:
+        - color: "#444"
+        - width: "28px"
+        - transition: "all 0.3s ease"
+      name:
+        - color: "#777"
+        - font-size: "14px"
+        - justify-self: "start"
+        - align-self: "center"
+    state:
+      - value: "on"
+        styles:
+          card:
+            - background: "rgba(30, 35, 45, 0.8)"
+            - border: "1px solid var(--accent-color, #ff007f)"
+            - box-shadow: "0 0 15px var(--accent-color, rgba(255, 0, 127, 0.3))"
+          icon:
+            - color: "var(--accent-color, #ff007f)"
+            - filter: "drop-shadow(0 0 8px var(--accent-color, #ff007f))"
+          name:
+            - color: "#fff"
+            - text-shadow: "0 0 2px rgba(255,255,255,0.2)"
+  cyber_round_btn:
+    show_name: true
+    show_state: true
+    styles:
+      card:
+        - aspect-ratio: "1/1"
+        - border-radius: "20%"
+        - background: "rgba(20, 20, 25, 0.6)"
+        - border: "1px solid rgba(255,255,255,0.05)"
+        - margin-bottom: "8px"
+      icon:
+        - color: "#444"
+        - width: "30%"
+      name:
+        - color: "#777"
+        - font-size: "12px"
+        - margin-top: "4%"
+      state:
+        - color: "#999"
+        - font-size: "10px"
+    state:
+      - value: "on"
+        styles:
+          card:
+            - border: "1px solid #00efff"
+            - box-shadow: "0 0 15px rgba(0, 239, 255, 0.3)"
+          icon:
+            - color: "#00efff"
+          name:
+            - color: "#fff"
+
+views:
+  - path: default_view
+    title: 赛博主控界面
+    background: "linear-gradient(135deg, #0f1016 0%, #171824 50%, #0d0e15 100%)"
+    panel: true
+    cards:
+      - type: grid
+        columns: 3
+        card_mod:
+          style: |
+            div#root {
+              grid-template-columns: 20% 65% 15% !important;
+              gap: 16px;
+              padding: 16px;
+            }
+        cards:
+          
+          # 1. ==== 左栏 ====
+          - type: vertical-stack
+            cards:
+              - type: custom:button-card
+                template: cyber_glow_box
+                custom_fields:
+                  weather:
+                    card:
+                      type: weather-forecast
+                      entity: weather.forecast_wo_de_jia
+                      show_forecast: false
+                      card_mod:
+                        style: |
+                          ha-card { background: none !important; border: none !important; box-shadow: none !important; }
+
+              - type: custom:button-card
+                template: cyber_glow_box
+                custom_fields:
+                  persons:
+                    card:
+                      type: horizontal-stack
+                      cards:
+                        - type: custom:mushroom-person-card
+                          entity: person.zuo_deng_zhen_xiang
+                          icon_type: entity-picture
+                          layout: vertical
+                        - type: custom:mushroom-person-card
+                          entity: person.jing_jing_jing
+                          icon_type: entity-picture
+                          layout: vertical
+
+              - type: custom:button-card
+                template: cyber_glow_box
+                name: "SYS//STATUS_OK"
+                styles:
+                  name: [color: "#00d2ff", font-family: "monospace", font-size: "12px", justify-self: "start"]
+                custom_fields:
+                  server:
+                    card:
+                      type: entities
+                      entities:
+                        - entity: sensor.mi_1329721117_message
+                          name: 系统信息
+                      card_mod:
+                        style: |
+                          ha-card { background: none; border: none; box-shadow: none; color: white;}
+
+          # 2. ==== 中栏 ====
+          - type: custom:button-card
+            template: cyber_glow_box
+            styles:
+              card: [ height: "95vh", overflow-y: "auto" ]
+            custom_fields:
+
+              room_餐厅:
+                card:
+                  type: conditional
+                  conditions:
+                    - entity: input_select.room_select
+                      state: "餐厅"
+                  card:
+                    type: grid
+                    columns: 2
+                    card_mod:
+                      style: |
+                        div#root {
+                          grid-template-columns: 25% 75% !important;
+                          gap: 16px;
+                        }
+                    cards:
+                      - type: vertical-stack
+                        cards:
+                          - type: custom:button-card
+                            entity: switch.can_ting_switch_1
+                            name: "餐厅开关1"
+                            template: cyber_switch
+                            variables: { accent_color: "#ff007f" }
+                          - type: custom:button-card
+                            entity: switch.can_ting_switch_2
+                            name: "餐厅开关2"
+                            template: cyber_switch
+                            variables: { accent_color: "#00d2ff" }
+                      - type: vertical-stack
+                        cards:
+                          - type: grid
+                            columns: 2
+                            cards:
+                              - type: custom:mushroom-light-card
+                                entity: light.lemesh_wy0c15_a4d3_light
+                                show_brightness_control: true
+                              - type: custom:mushroom-light-card
+                                entity: light.lemesh_wy0c15_be94_light
+                                show_brightness_control: true
+                              - type: custom:mushroom-light-card
+                                entity: light.lemesh_wy0c15_f24c_light
+                                show_brightness_control: true
+                              - type: custom:mushroom-light-card
+                                entity: light.lemesh_wy0c15_0ef1_light
+                                show_brightness_control: true
+                              - type: custom:mushroom-light-card
+                                entity: light.lemesh_wyra01_4639_ambient_light
+                                show_brightness_control: true
+                              - type: custom:mushroom-light-card
+                                entity: light.lemesh_wyra01_4639_light
+                                show_brightness_control: true
+
+              room_厨房:
+                card:
+                  type: conditional
+                  conditions:
+                    - entity: input_select.room_select
+                      state: "厨房"
+                  card:
+                    type: grid
+                    columns: 2
+                    card_mod:
+                      style: |
+                        div#root {
+                          grid-template-columns: 25% 75% !important;
+                          gap: 16px;
+                        }
+                    cards:
+                      - type: vertical-stack
+                        cards:
+                          - type: custom:button-card
+                            entity: switch.chu_fang_switch_1
+                            name: "厨房开关1"
+                            template: cyber_switch
+                            variables: { accent_color: "#ff007f" }
+                          - type: custom:button-card
+                            entity: switch.chu_fang_switch_2
+                            name: "厨房开关2"
+                            template: cyber_switch
+                            variables: { accent_color: "#00d2ff" }
+                      - type: vertical-stack
+                        cards:
+                          - type: grid
+                            columns: 2
+                            cards:
+                              - type: custom:mushroom-light-card
+                                entity: light.lemesh_wy0c15_7a81_light
+                                show_brightness_control: true
+                              - type: custom:mushroom-light-card
+                                entity: light.lemesh_wy0c15_cb6a_light
+                                show_brightness_control: true
+                              - type: custom:mushroom-light-card
+                                entity: light.lemesh_wy0c15_9bf5_light
+                                show_brightness_control: true
+                              - type: custom:mushroom-light-card
+                                entity: light.lemesh_wy0c15_647f_light
+                                show_brightness_control: true
+                          - type: grid
+                            columns: 4
+                            cards:
+                              - type: custom:button-card
+                                entity: binary_sensor.chu_fang_gan_ying_motion
+                                template: cyber_round_btn
+                              - type: custom:button-card
+                                entity: binary_sensor.ran_qi_bao_jing_qi_gas
+                                template: cyber_round_btn
+                              - type: custom:button-card
+                                entity: binary_sensor.wu_xian_shui_jin_chuan_gan_qi_moisture
+                                template: cyber_round_btn
+                              - type: custom:button-card
+                                entity: binary_sensor.yan_wu_chuan_gan_qi_smoke
+                                template: cyber_round_btn
+
+              room_次卧:
+                card:
+                  type: conditional
+                  conditions:
+                    - entity: input_select.room_select
+                      state: "次卧"
+                  card:
+                    type: grid
+                    columns: 2
+                    card_mod:
+                      style: |
+                        div#root {
+                          grid-template-columns: 25% 75% !important;
+                          gap: 16px;
+                        }
+                    cards:
+                      - type: vertical-stack
+                        cards:
+                          - type: custom:button-card
+                            entity: switch.ci_wo_switch_1
+                            name: "次卧开关1"
+                            template: cyber_switch
+                            variables: { accent_color: "#ff007f" }
+                          - type: custom:button-card
+                            entity: switch.ci_wo_switch_2
+                            name: "次卧开关2"
+                            template: cyber_switch
+                            variables: { accent_color: "#00d2ff" }
+                          - type: custom:button-card
+                            entity: switch.ci_wo_switch_3
+                            name: "次卧开关3"
+                            template: cyber_switch
+                            variables: { accent_color: "#00ffcc" }
+                          - type: custom:button-card
+                            entity: switch.xiaomi_m4_50e9_dryer
+                            name: "空调干燥"
+                            template: cyber_switch
+                            variables: { accent_color: "#ffaa00" }
+                          - type: custom:button-card
+                            entity: switch.xiaomi_m4_50e9_eco
+                            name: "空调ECO"
+                            template: cyber_switch
+                            variables: { accent_color: "#7700ff" }
+                          - type: custom:button-card
+                            entity: switch.xiaomi_m4_50e9_heater_2
+                            name: "空调加热"
+                            template: cyber_switch
+                            variables: { accent_color: "#ff00bb" }
+                          - type: custom:button-card
+                            entity: switch.xiaomi_m4_50e9_sleep_mode
+                            name: "睡眠模式"
+                            template: cyber_switch
+                            variables: { accent_color: "#0088ff" }
+                          - type: custom:button-card
+                            entity: switch.xiaomi_m4_50e9_switch_status
+                            name: "状态显示"
+                            template: cyber_switch
+                            variables: { accent_color: "#00efff" }
+                          - type: custom:button-card
+                            entity: switch.xiaomi_m4_50e9_unstraight_blowing
+                            name: "防直吹"
+                            template: cyber_switch
+                            variables: { accent_color: "#ff007f" }
+                          - type: custom:button-card
+                            entity: switch.xiaomi_m4_50e9_alarm
+                            name: "警报"
+                            template: cyber_switch
+                            variables: { accent_color: "#00d2ff" }
+                      - type: vertical-stack
+                        cards:
+                          - type: thermostat
+                            entity: climate.xiaomi_m4_50e9_air_conditioner
+                            card_mod:
+                              style: |
+                                ha-card { background: rgba(0,0,0,0.3) !important; border: 1px solid rgba(0,255,255,0.2) !important; }
+                          - type: grid
+                            columns: 2
+                            cards:
+                              - type: custom:mushroom-light-card
+                                entity: light.lemesh_wy0c15_318b_light
+                                show_brightness_control: true
+                              - type: custom:mushroom-light-card
+                                entity: light.xiaomi_m4_50e9_indicator_light
+                                show_brightness_control: true
+                              - type: custom:mushroom-light-card
+                                entity: light.lemesh_wy0c15_e178_light
+                                show_brightness_control: true
+                              - type: custom:mushroom-light-card
+                                entity: light.lemesh_wy0c15_9c89_light
+                                show_brightness_control: true
+                              - type: custom:mushroom-light-card
+                                entity: light.lemesh_wy0c15_06a2_light
+                                show_brightness_control: true
+                              - type: custom:mushroom-light-card
+                                entity: light.lemesh_wy0c15_831b_light
+                                show_brightness_control: true
+                          - type: grid
+                            columns: 4
+                            cards:
+                              - type: custom:button-card
+                                entity: sensor.xiaomi_m4_50e9_relative_humidity
+                                template: cyber_round_btn
+                              - type: custom:button-card
+                                entity: sensor.xiaomi_m4_50e9_temperature
+                                template: cyber_round_btn
+                              - type: custom:button-card
+                                entity: sensor.xiaomi_m4_50e9_filter_life_level
+                                template: cyber_round_btn
+
+              room_过道:
+                card:
+                  type: conditional
+                  conditions:
+                    - entity: input_select.room_select
+                      state: "过道"
+                  card:
+                    type: grid
+                    columns: 2
+                    card_mod:
+                      style: |
+                        div#root {
+                          grid-template-columns: 25% 75% !important;
+                          gap: 16px;
+                        }
+                    cards:
+                      - type: vertical-stack
+                        cards:
+                          - type: custom:button-card
+                            entity: switch.guo_dao_switch_1
+                            name: "过道开关1"
+                            template: cyber_switch
+                            variables: { accent_color: "#ff007f" }
+                          - type: custom:button-card
+                            entity: switch.guo_dao_switch_2
+                            name: "过道开关2"
+                            template: cyber_switch
+                            variables: { accent_color: "#00d2ff" }
+                          - type: custom:button-card
+                            entity: switch.guo_dao_switch_3
+                            name: "过道开关3"
+                            template: cyber_switch
+                            variables: { accent_color: "#00ffcc" }
+                      - type: vertical-stack
+                        cards:
+                          - type: grid
+                            columns: 2
+                            cards:
+                              - type: custom:mushroom-light-card
+                                entity: light.lemesh_wy0c15_318d_light
+                                show_brightness_control: true
+                              - type: custom:mushroom-light-card
+                                entity: light.lemesh_wy0c15_033d_light
+                                show_brightness_control: true
+                              - type: custom:mushroom-light-card
+                                entity: light.lemesh_wy0c15_16a4_light
+                                show_brightness_control: true
+                              - type: custom:mushroom-light-card
+                                entity: light.lemesh_wy0c15_2faf_light
+                                show_brightness_control: true
+
+              room_客厅:
+                card:
+                  type: conditional
+                  conditions:
+                    - entity: input_select.room_select
+                      state: "客厅"
+                  card:
+                    type: grid
+                    columns: 2
+                    card_mod:
+                      style: |
+                        div#root {
+                          grid-template-columns: 25% 75% !important;
+                          gap: 16px;
+                        }
+                    cards:
+                      - type: vertical-stack
+                        cards:
+                          - type: custom:button-card
+                            entity: switch.ke_ting_deng_dai_switch_1
+                            name: "灯带开关1"
+                            template: cyber_switch
+                            variables: { accent_color: "#ff007f" }
+                          - type: custom:button-card
+                            entity: switch.ke_ting_deng_dai_switch_2
+                            name: "灯带开关2"
+                            template: cyber_switch
+                            variables: { accent_color: "#00d2ff" }
+                          - type: custom:button-card
+                            entity: switch.ke_ting_tong_deng_switch_1
+                            name: "筒灯开关1"
+                            template: cyber_switch
+                            variables: { accent_color: "#00ffcc" }
+                          - type: custom:button-card
+                            entity: switch.ke_ting_tong_deng_switch_2
+                            name: "筒灯开关2"
+                            template: cyber_switch
+                            variables: { accent_color: "#ffaa00" }
+                          - type: custom:button-card
+                            entity: switch.dooya_c1_f2db_mode_2
+                            name: "窗帘模式2"
+                            template: cyber_switch
+                            variables: { accent_color: "#7700ff" }
+                          - type: custom:button-card
+                            entity: switch.dooya_c1_cc3d_mode_2
+                            name: "窗帘模式2"
+                            template: cyber_switch
+                            variables: { accent_color: "#ff00bb" }
+                          - type: custom:button-card
+                            entity: switch.zjdh_xj001_0a74_motor_reverse
+                            name: "电机反转"
+                            template: cyber_switch
+                            variables: { accent_color: "#0088ff" }
+                      - type: vertical-stack
+                        cards:
+                          - type: media-control
+                            entity: media_player.ke_ting
+                          - type: media-control
+                            entity: media_player.samsung_qx3ca_85_tv
+                          - type: grid
+                            columns: 2
+                            cards:
+                              - type: custom:mushroom-light-card
+                                entity: light.lemesh_wy0c15_adb0_light
+                                show_brightness_control: true
+                              - type: custom:mushroom-light-card
+                                entity: light.lemesh_wy0c15_b016_light
+                                show_brightness_control: true
+                              - type: custom:mushroom-light-card
+                                entity: light.lemesh_wy0c15_bcd7_light
+                                show_brightness_control: true
+                              - type: custom:mushroom-light-card
+                                entity: light.lemesh_wy0c15_b455_light
+                                show_brightness_control: true
+                              - type: custom:mushroom-light-card
+                                entity: light.lemesh_wy0c15_f240_light
+                                show_brightness_control: true
+                              - type: custom:mushroom-light-card
+                                entity: light.lemesh_wy0c15_bcc2_light
+                                show_brightness_control: true
+                              - type: custom:mushroom-light-card
+                                entity: light.lemesh_wy0c15_dbff_light
+                                show_brightness_control: true
+                              - type: custom:mushroom-light-card
+                                entity: light.lemesh_wy0c15_0a31_light
+                                show_brightness_control: true
+                              - type: custom:mushroom-light-card
+                                entity: light.lemesh_wy0c15_ed5a_light
+                                show_brightness_control: true
+                              - type: custom:mushroom-cover-card
+                                entity: cover.dooya_c1_f2db_curtain
+                                show_position_control: true
+                                show_buttons_control: true
+                              - type: custom:mushroom-cover-card
+                                entity: cover.dooya_c1_cc3d_curtain
+                                show_position_control: true
+                                show_buttons_control: true
+                              - type: custom:mushroom-cover-card
+                                entity: cover.zjdh_xj001_0a74_curtain
+                                show_position_control: true
+                                show_buttons_control: true
+
+              room_生活阳台:
+                card:
+                  type: conditional
+                  conditions:
+                    - entity: input_select.room_select
+                      state: "生活阳台"
+                  card:
+                    type: grid
+                    columns: 2
+                    card_mod:
+                      style: |
+                        div#root {
+                          grid-template-columns: 25% 75% !important;
+                          gap: 16px;
+                        }
+                    cards:
+                      - type: vertical-stack
+                        cards:
+                          - type: custom:button-card
+                            entity: switch.sheng_huo_yang_tai_switch_1
+                            name: "阳台开关1"
+                            template: cyber_switch
+                            variables: { accent_color: "#ff007f" }
+                          - type: custom:button-card
+                            entity: switch.yszn01_ys2102_c8c6_dryer
+                            name: "烘干"
+                            template: cyber_switch
+                            variables: { accent_color: "#00d2ff" }
+                          - type: custom:button-card
+                            entity: switch.yszn01_ys2102_c8c6_uv
+                            name: "杀菌"
+                            template: cyber_switch
+                            variables: { accent_color: "#00ffcc" }
+                      - type: vertical-stack
+                        cards:
+                          - type: grid
+                            columns: 2
+                            cards:
+                              - type: custom:mushroom-cover-card
+                                entity: cover.yszn01_ys2102_c8c6_airer
+                                show_position_control: true
+                                show_buttons_control: true
+                              - type: custom:mushroom-light-card
+                                entity: light.yszn01_ys2102_c8c6_light
+                                show_brightness_control: true
+
+              room_书房:
+                card:
+                  type: conditional
+                  conditions:
+                    - entity: input_select.room_select
+                      state: "书房"
+                  card:
+                    type: grid
+                    columns: 2
+                    card_mod:
+                      style: |
+                        div#root {
+                          grid-template-columns: 25% 75% !important;
+                          gap: 16px;
+                        }
+                    cards:
+                      - type: vertical-stack
+                        cards:
+                          - type: custom:button-card
+                            entity: switch.shu_fang_switch_1
+                            name: "书房开关1"
+                            template: cyber_switch
+                            variables: { accent_color: "#ff007f" }
+                          - type: custom:button-card
+                            entity: switch.shu_fang_switch_2
+                            name: "书房开关2"
+                            template: cyber_switch
+                            variables: { accent_color: "#00d2ff" }
+                          - type: custom:button-card
+                            entity: switch.shu_fang_switch_3
+                            name: "书房开关3"
+                            template: cyber_switch
+                            variables: { accent_color: "#00ffcc" }
+                          - type: custom:button-card
+                            entity: switch.xiaomi_m4_549b_dryer
+                            name: "空调干燥"
+                            template: cyber_switch
+                            variables: { accent_color: "#ffaa00" }
+                          - type: custom:button-card
+                            entity: switch.xiaomi_m4_549b_eco
+                            name: "空调ECO"
+                            template: cyber_switch
+                            variables: { accent_color: "#7700ff" }
+                          - type: custom:button-card
+                            entity: switch.xiaomi_m4_549b_heater_2
+                            name: "空调加热"
+                            template: cyber_switch
+                            variables: { accent_color: "#ff00bb" }
+                          - type: custom:button-card
+                            entity: switch.xiaomi_m4_549b_sleep_mode
+                            name: "睡眠模式"
+                            template: cyber_switch
+                            variables: { accent_color: "#0088ff" }
+                          - type: custom:button-card
+                            entity: switch.xiaomi_m4_549b_switch_status
+                            name: "状态显示"
+                            template: cyber_switch
+                            variables: { accent_color: "#00efff" }
+                          - type: custom:button-card
+                            entity: switch.xiaomi_m4_549b_unstraight_blowing
+                            name: "防直吹"
+                            template: cyber_switch
+                            variables: { accent_color: "#ff007f" }
+                          - type: custom:button-card
+                            entity: switch.xiaomi_m4_549b_alarm
+                            name: "警报"
+                            template: cyber_switch
+                            variables: { accent_color: "#00d2ff" }
+                          - type: custom:button-card
+                            entity: switch.xiaomi_lx06_843f_sleep_mode
+                            name: "音箱睡眠"
+                            template: cyber_switch
+                            variables: { accent_color: "#00ffcc" }
+                      - type: vertical-stack
+                        cards:
+                          - type: thermostat
+                            entity: climate.xiaomi_m4_549b_air_conditioner
+                            card_mod:
+                              style: |
+                                ha-card { background: rgba(0,0,0,0.3) !important; border: 1px solid rgba(0,255,255,0.2) !important; }
+                          - type: media-control
+                            entity: media_player.xiaomi_lx06_843f_play_control
+                          - type: grid
+                            columns: 2
+                            cards:
+                              - type: custom:mushroom-light-card
+                                entity: light.lemesh_wy0c15_312c_light
+                                show_brightness_control: true
+                              - type: custom:mushroom-light-card
+                                entity: light.lemesh_wy0c15_3221_light
+                                show_brightness_control: true
+                              - type: custom:mushroom-light-card
+                                entity: light.xiaomi_m4_549b_indicator_light
+                                show_brightness_control: true
+                              - type: custom:mushroom-light-card
+                                entity: light.lemesh_wy0c15_00ca_light
+                                show_brightness_control: true
+                              - type: custom:mushroom-light-card
+                                entity: light.lemesh_wy0c15_6d30_light
+                                show_brightness_control: true
+                              - type: custom:mushroom-light-card
+                                entity: light.lemesh_wy0c15_e3ed_light
+                                show_brightness_control: true
+                          - type: grid
+                            columns: 4
+                            cards:
+                              - type: custom:button-card
+                                entity: sensor.xiaomi_m4_549b_relative_humidity
+                                template: cyber_round_btn
+                              - type: custom:button-card
+                                entity: sensor.xiaomi_m4_549b_temperature
+                                template: cyber_round_btn
+                              - type: custom:button-card
+                                entity: sensor.xiaomi_m4_549b_filter_life_level
+                                template: cyber_round_btn
+                              - type: custom:button-card
+                                entity: sensor.xiaomi_lx06_843f_conversation
+                                template: cyber_round_btn
+
+              room_玄关:
+                card:
+                  type: conditional
+                  conditions:
+                    - entity: input_select.room_select
+                      state: "玄关"
+                  card:
+                    type: grid
+                    columns: 2
+                    card_mod:
+                      style: |
+                        div#root {
+                          grid-template-columns: 25% 75% !important;
+                          gap: 16px;
+                        }
+                    cards:
+                      - type: vertical-stack
+                        cards:
+                          - type: custom:button-card
+                            entity: switch.xuan_guan_switch_1
+                            name: "玄关开关1"
+                            template: cyber_switch
+                            variables: { accent_color: "#ff007f" }
+                          - type: custom:button-card
+                            entity: switch.xuan_guan_switch_2
+                            name: "玄关开关2"
+                            template: cyber_switch
+                            variables: { accent_color: "#00d2ff" }
+                      - type: vertical-stack
+                        cards:
+                          - type: grid
+                            columns: 4
+                            cards:
+                              - type: custom:button-card
+                                entity: binary_sensor.xuan_guan_men_ci_door
+                                template: cyber_round_btn
+
+              room_阳台:
+                card:
+                  type: conditional
+                  conditions:
+                    - entity: input_select.room_select
+                      state: "阳台"
+                  card:
+                    type: grid
+                    columns: 2
+                    card_mod:
+                      style: |
+                        div#root {
+                          grid-template-columns: 25% 75% !important;
+                          gap: 16px;
+                        }
+                    cards:
+                      - type: vertical-stack
+                        cards:
+                          - type: custom:button-card
+                            entity: switch.yang_tai_switch_1
+                            name: "阳台开关1"
+                            template: cyber_switch
+                            variables: { accent_color: "#ff007f" }
+                          - type: custom:button-card
+                            entity: switch.yang_tai_switch_2
+                            name: "阳台开关2"
+                            template: cyber_switch
+                            variables: { accent_color: "#00d2ff" }
+                          - type: custom:button-card
+                            entity: switch.yang_tai_switch_3
+                            name: "阳台开关3"
+                            template: cyber_switch
+                            variables: { accent_color: "#00ffcc" }
+                      - type: vertical-stack
+                        cards:
+                          - type: grid
+                            columns: 2
+                            cards:
+                              - type: custom:mushroom-light-card
+                                entity: light.lemesh_wy0c15_a2d3_light
+                                show_brightness_control: true
+                              - type: custom:mushroom-light-card
+                                entity: light.lemesh_wy0c15_2ee4_light
+                                show_brightness_control: true
+                              - type: custom:mushroom-light-card
+                                entity: light.lemesh_wy0c15_2d1b_light
+                                show_brightness_control: true
+                              - type: custom:mushroom-light-card
+                                entity: light.lemesh_wy0c08_67f7_light
+                                show_brightness_control: true
+                              - type: custom:mushroom-light-card
+                                entity: light.lemesh_wy0c09_c969_light
+                                show_brightness_control: true
+                              - type: custom:mushroom-light-card
+                                entity: light.lemesh_wy0c08_a7fa_light
+                                show_brightness_control: true
+
+              room_主卧:
+                card:
+                  type: conditional
+                  conditions:
+                    - entity: input_select.room_select
+                      state: "主卧"
+                  card:
+                    type: grid
+                    columns: 2
+                    card_mod:
+                      style: |
+                        div#root {
+                          grid-template-columns: 25% 75% !important;
+                          gap: 16px;
+                        }
+                    cards:
+                      - type: vertical-stack
+                        cards:
+                          - type: custom:button-card
+                            entity: switch.zhu_wo_switch_1
+                            name: "主卧开关1"
+                            template: cyber_switch
+                            variables: { accent_color: "#ff007f" }
+                          - type: custom:button-card
+                            entity: switch.zhu_wo_switch_2
+                            name: "主卧开关2"
+                            template: cyber_switch
+                            variables: { accent_color: "#00d2ff" }
+                          - type: custom:button-card
+                            entity: switch.zhu_wo_switch_3
+                            name: "主卧开关3"
+                            template: cyber_switch
+                            variables: { accent_color: "#00ffcc" }
+                          - type: custom:button-card
+                            entity: switch.zhu_wo_switch_4
+                            name: "主卧开关4"
+                            template: cyber_switch
+                            variables: { accent_color: "#ffaa00" }
+                          - type: custom:button-card
+                            entity: switch.xiaomi_m4_1c38_dryer
+                            name: "空调干燥"
+                            template: cyber_switch
+                            variables: { accent_color: "#7700ff" }
+                          - type: custom:button-card
+                            entity: switch.xiaomi_m4_1c38_eco
+                            name: "空调ECO"
+                            template: cyber_switch
+                            variables: { accent_color: "#ff00bb" }
+                          - type: custom:button-card
+                            entity: switch.xiaomi_m4_1c38_heater_2
+                            name: "空调加热"
+                            template: cyber_switch
+                            variables: { accent_color: "#0088ff" }
+                          - type: custom:button-card
+                            entity: switch.xiaomi_m4_1c38_sleep_mode
+                            name: "睡眠模式"
+                            template: cyber_switch
+                            variables: { accent_color: "#00efff" }
+                          - type: custom:button-card
+                            entity: switch.xiaomi_m4_1c38_switch_status
+                            name: "状态显示"
+                            template: cyber_switch
+                            variables: { accent_color: "#ff007f" }
+                          - type: custom:button-card
+                            entity: switch.xiaomi_m4_1c38_unstraight_blowing
+                            name: "防直吹"
+                            template: cyber_switch
+                            variables: { accent_color: "#00d2ff" }
+                          - type: custom:button-card
+                            entity: switch.xiaomi_m4_1c38_alarm
+                            name: "警报"
+                            template: cyber_switch
+                            variables: { accent_color: "#00ffcc" }
+                          - type: custom:button-card
+                            entity: switch.zhu_wo_men_deng_switch_1
+                            name: "门灯开关"
+                            template: cyber_switch
+                            variables: { accent_color: "#ffaa00" }
+                          - type: custom:button-card
+                            entity: switch.zhu_wo_she_deng_tai_deng_switch_1
+                            name: "射灯开关1"
+                            template: cyber_switch
+                            variables: { accent_color: "#7700ff" }
+                          - type: custom:button-card
+                            entity: switch.zhu_wo_she_deng_tai_deng_switch_2
+                            name: "射灯开关2"
+                            template: cyber_switch
+                            variables: { accent_color: "#ff00bb" }
+                      - type: vertical-stack
+                        cards:
+                          - type: thermostat
+                            entity: climate.xiaomi_m4_1c38_air_conditioner
+                            card_mod:
+                              style: |
+                                ha-card { background: rgba(0,0,0,0.3) !important; border: 1px solid rgba(0,255,255,0.2) !important; }
+                          - type: grid
+                            columns: 2
+                            cards:
+                              - type: custom:mushroom-light-card
+                                entity: light.lemesh_wy0c14_c615_light
+                                show_brightness_control: true
+                              - type: custom:mushroom-light-card
+                                entity: light.lemesh_wy0c15_ae79_light
+                                show_brightness_control: true
+                              - type: custom:mushroom-light-card
+                                entity: light.xiaomi_m4_1c38_indicator_light
+                                show_brightness_control: true
+                              - type: custom:mushroom-light-card
+                                entity: light.lemesh_wy0c15_f7b6_light
+                                show_brightness_control: true
+                              - type: custom:mushroom-light-card
+                                entity: light.lemesh_wy0c15_f712_light
+                                show_brightness_control: true
+                              - type: custom:mushroom-light-card
+                                entity: light.lemesh_wy0c15_2fda_light
+                                show_brightness_control: true
+                              - type: custom:mushroom-light-card
+                                entity: light.lemesh_wy0c15_7bc9_light
+                                show_brightness_control: true
+                              - type: custom:mushroom-light-card
+                                entity: light.lemesh_wy0c15_5d3b_light
+                                show_brightness_control: true
+                              - type: custom:mushroom-light-card
+                                entity: light.lemesh_wy0c15_25e7_light
+                                show_brightness_control: true
+                          - type: grid
+                            columns: 4
+                            cards:
+                              - type: custom:button-card
+                                entity: sensor.xiaomi_m4_1c38_relative_humidity
+                                template: cyber_round_btn
+                              - type: custom:button-card
+                                entity: sensor.xiaomi_m4_1c38_temperature
+                                template: cyber_round_btn
+                              - type: custom:button-card
+                                entity: sensor.xiaomi_m4_1c38_filter_life_level
+                                template: cyber_round_btn
+
+              room_主卫:
+                card:
+                  type: conditional
+                  conditions:
+                    - entity: input_select.room_select
+                      state: "主卫"
+                  card:
+                    type: grid
+                    columns: 2
+                    card_mod:
+                      style: |
+                        div#root {
+                          grid-template-columns: 25% 75% !important;
+                          gap: 16px;
+                        }
+                    cards:
+                      - type: vertical-stack
+                        cards:
+                          - type: custom:button-card
+                            entity: switch.zhu_wei_switch_1
+                            name: "主卫开关1"
+                            template: cyber_switch
+                            variables: { accent_color: "#ff007f" }
+                          - type: custom:button-card
+                            entity: switch.zhu_wei_switch_2
+                            name: "主卫开关2"
+                            template: cyber_switch
+                            variables: { accent_color: "#00d2ff" }
+                          - type: custom:button-card
+                            entity: switch.zhu_wei_kai_guan_switch_1
+                            name: "内部开关1"
+                            template: cyber_switch
+                            variables: { accent_color: "#00ffcc" }
+                          - type: custom:button-card
+                            entity: switch.zhu_wei_kai_guan_switch_2
+                            name: "内部开关2"
+                            template: cyber_switch
+                            variables: { accent_color: "#ffaa00" }
+                      - type: vertical-stack
+                        cards:
+
+          # 3. ==== 右栏 ====
+          - type: vertical-stack
+            cards:
+              - type: custom:button-card
+                name: 餐厅
+                template: room_nav_btn
+                variables:
+                  room_name: "餐厅"
+              - type: custom:button-card
+                name: 厨房
+                template: room_nav_btn
+                variables:
+                  room_name: "厨房"
+              - type: custom:button-card
+                name: 次卧
+                template: room_nav_btn
+                variables:
+                  room_name: "次卧"
+              - type: custom:button-card
+                name: 过道
+                template: room_nav_btn
+                variables:
+                  room_name: "过道"
+              - type: custom:button-card
+                name: 客厅
+                template: room_nav_btn
+                variables:
+                  room_name: "客厅"
+              - type: custom:button-card
+                name: 生活阳台
+                template: room_nav_btn
+                variables:
+                  room_name: "生活阳台"
+              - type: custom:button-card
+                name: 书房
+                template: room_nav_btn
+                variables:
+                  room_name: "书房"
+              - type: custom:button-card
+                name: 玄关
+                template: room_nav_btn
+                variables:
+                  room_name: "玄关"
+              - type: custom:button-card
+                name: 阳台
+                template: room_nav_btn
+                variables:
+                  room_name: "阳台"
+              - type: custom:button-card
+                name: 主卧
+                template: room_nav_btn
+                variables:
+                  room_name: "主卧"
+              - type: custom:button-card
+                name: 主卫
+                template: room_nav_btn
+                variables:
+                  room_name: "主卫"
